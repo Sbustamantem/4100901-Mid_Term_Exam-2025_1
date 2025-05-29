@@ -8,11 +8,11 @@
 #include "tim.h"
 #include "rcc.h"  // Para rcc_tim3_clock_enable y TIM_PCLK_FREQ_HZ
 #include "gpio.h" // Para configurar pin PB4
-
+static volatile uint32_t current_duty = 0;
 void tim3_ch1_pwm_init(uint32_t pwm_freq_hz)
 {
     // 1. Configurar PA6 como Alternate Function (AF2) para TIM3_CH1
-    gpio_setup_pin(GPIOA, 6, GPIO_MODE_AF, 2);
+    gpio_setup_pin(GPIOB, 4, GPIO_MODE_AF, 2); //puesto a IOB4 
 
     // 2. Habilitar el reloj para TIM3
     rcc_tim3_clock_enable();
@@ -43,4 +43,11 @@ void tim3_ch1_pwm_set_duty_cycle(uint8_t duty_cycle_percent)
     uint32_t ccr_value = (((uint32_t)tim3_ch1_arr_value + 1U) * duty_cycle_percent) / 100U;
 
     TIM3->CCR1 = ccr_value;
+    current_duty = duty_cycle_percent;
+   
+}
+
+uint32_t current_duty_get(void)
+{
+    return current_duty ;
 }
